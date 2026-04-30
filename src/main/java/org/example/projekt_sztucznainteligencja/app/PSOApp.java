@@ -1,4 +1,4 @@
-package org.example.projekt_sztucznainteligencja;
+package org.example.projekt_sztucznainteligencja.app;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +13,8 @@ public class PSOApp extends Application
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("interface.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/org/example/projekt_sztucznainteligencja/interface.fxml")));
+        // 16:9
         Scene scene = new Scene(root, 1024, 576);
         primaryStage.setTitle("Algorytm PSO - GUI");
         primaryStage.setScene(scene);

@@ -1,4 +1,4 @@
-package org.example.projekt_sztucznainteligencja;
+package org.example.projekt_sztucznainteligencja.app;
 
 import javafx.application.Application;
 
