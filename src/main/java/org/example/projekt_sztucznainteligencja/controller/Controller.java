@@ -12,6 +12,7 @@ import org.example.projekt_sztucznainteligencja.model.PSOSolver;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO KOMENTARZE
 public class Controller
 {
     @FXML private ComboBox<FitnessFunction> functionChoice;
@@ -99,7 +100,6 @@ public class Controller
                     selectedFunc, randomIntertia.isSelected(), randomCognitive.isSelected(), randomSocial.isSelected()
             );
 
-            // Bindowanie logiki z UI
             solver.setOnLogUpdate(message ->
                     Platform.runLater(() -> logArea.appendText(message))
             );

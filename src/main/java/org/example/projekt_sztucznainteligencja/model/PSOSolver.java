@@ -3,7 +3,7 @@ package org.example.projekt_sztucznainteligencja.model;
 import javafx.concurrent.Task;
 import java.util.Random;
 import java.util.function.Consumer;
-
+// TODO KOMENTARZE
 public class PSOSolver extends Task<Void>
 {
     private final double baseW, baseC1, baseC2, targetOptimum;
@@ -150,11 +150,16 @@ public class PSOSolver extends Task<Void>
         }
         report.append(String.format("ZWYCIĘZCA: Cząsteczka nr %d\n", bestParticleIndex));
         report.append(String.format("NAJLEPSZY WYNIK: %.10f w (%.4f, %.4f)\n", globalBestValue, globalBestPos[0], globalBestPos[1]));
-
         log(report.toString());
 
-        if (onChartUpdate != null) onChartUpdate.accept(swarm);
-        if (onBestFound != null) onBestFound.accept(globalBestPos);
+        if(onChartUpdate != null)
+        {
+            onChartUpdate.accept(swarm);
+        }
+        if(onBestFound != null)
+        {
+            onBestFound.accept(globalBestPos);
+        }
 
         return null;
     }

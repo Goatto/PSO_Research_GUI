@@ -1,5 +1,6 @@
 package org.example.projekt_sztucznainteligencja.model;
 
+// TODO KOMENTARZE
 public class Particle
 {
     public double x, y, vx = 0, vy = 0;
