@@ -1,10 +1,16 @@
 package org.example.projekt_sztucznainteligencja.model;
 
-// TODO KOMENTARZE
 public class Particle
 {
-    public double x, y, vx = 0, vy = 0;
+    // obecna pozycja
+    public double x;
+    public double y;
+    // prędkości
+    public double vx = 0;
+    public double vy = 0;
     public double[] bestPos = new double[2];
+    // najlepsza wartość, którą do tej pory osiągnęliśmy
+    // maksimum wartości, z racji, że zawsze otrzymamy niższą liczbę, która od razu ją zastąpi
     public double bestValue = Double.MAX_VALUE;
 
     public Particle(double x, double y)

@@ -8,13 +8,13 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.Spinner?>
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.projekt_sztucznainteligencja.controller.Controller">
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -49,13 +49,13 @@
             <CheckBox fx:id="randomIntertia" mnemonicParsing="false" text="Losowa [0.4-0.9]" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <CheckBox fx:id="randomCognitive" mnemonicParsing="false" text="Losowa [0.5-2.5]" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <CheckBox fx:id="randomSocial" mnemonicParsing="false" text="Losowa [0.5-2.5]" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <TextField fx:id="inertiaField" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="cognitiveField" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="socialField" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <TextField fx:id="optimumField" text="0.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <TextField fx:id="particlesAmountField" text="50" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <TextField fx:id="epochsField" text="100" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <TextField fx:id="precisionField" text="10" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Spinner fx:id="inertiaField" min="0.0" max="5.0" initialValue="0.5" amountToStepBy="0.1" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Spinner fx:id="cognitiveField" min="0.0" max="5.0" initialValue="1.5" amountToStepBy="0.1" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Spinner fx:id="socialField" min="0.0" max="5.0" initialValue="1.5" amountToStepBy="0.1" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Spinner fx:id="optimumField" min="-1000.0" max="1000.0" initialValue="0.0" amountToStepBy="1.0" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Spinner fx:id="particlesAmountField" min="10" max="5000" initialValue="50" amountToStepBy="10" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Spinner fx:id="epochsField" min="10" max="10000" initialValue="100" amountToStepBy="50" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Spinner fx:id="precisionField" min="1" max="15" initialValue="10" amountToStepBy="1" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
         </GridPane>
         <Button fx:id="startButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#runPSOAlgorithm" prefWidth="350.0" text="Start" VBox.vgrow="NEVER" />
         <TextArea fx:id="logArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
