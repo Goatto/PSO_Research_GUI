@@ -28,6 +28,9 @@ public class PSOSolver extends Task<Void>
     private Consumer<Particle[]> onChartUpdate;
     private Consumer<double[]> onBestFound;
 
+    // dane do wyeksportowania
+    private Particle[] swarm;
+
     public PSOSolver(double baseInertia, double baseCognitive, double baseC2, double targetOptimum,
                      int particlesCount, int maxEpochs, int precision,
                      FitnessFunction selectedFitnessFunction, boolean IsInertiaRandom, boolean IsCognitiveRandom, boolean IsSocialRandom)
@@ -75,7 +78,7 @@ public class PSOSolver extends Task<Void>
 
         log(String.format("Parametry: w:%.4f | c1:%.4f | c2:%.4f\n", currentW, currentC1, currentC2));
 
-        Particle[] swarm = new Particle[particlesCount];
+        swarm = new Particle[particlesCount];
         double[] globalBestPos = new double[2];
         double globalBestValue = Double.MAX_VALUE;
         int bestParticleIndex = -1;
@@ -185,5 +188,9 @@ public class PSOSolver extends Task<Void>
         }
 
         return null;
+    }
+    public Particle[] getSwarm()
+    {
+        return swarm;
     }
 }

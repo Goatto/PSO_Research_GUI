@@ -58,6 +58,8 @@
             <Spinner fx:id="precisionField" min="1" max="15" initialValue="10" amountToStepBy="1" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
         </GridPane>
         <Button fx:id="startButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#runPSOAlgorithm" prefWidth="350.0" text="Start" VBox.vgrow="NEVER" />
+        <Button fx:id="exportButton" disable="true" maxWidth="1.7976931348623157E308"
+                mnemonicParsing="false" onAction="#exportResults" text="Eksportuj wyniki (Excel/CSV)" />
         <TextArea fx:id="logArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
     </VBox>
     <ScatterChart fx:id="particleChart" animated="false" title="Rozkład cząsteczek">

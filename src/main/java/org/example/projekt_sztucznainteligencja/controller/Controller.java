@@ -8,6 +8,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import org.example.projekt_sztucznainteligencja.model.FitnessFunction;
 import org.example.projekt_sztucznainteligencja.model.PSOSolver;
+import org.example.projekt_sztucznainteligencja.model.Particle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,9 @@ public class Controller
     @FXML private ScatterChart<Number, Number> particleChart;
     @FXML private NumberAxis xAxis;
     @FXML private NumberAxis yAxis;
+
+    @FXML private Button exportButton;
+    private Particle[] lastSwarm;
 
     private XYChart.Series<Number, Number> particleSeries;
     private XYChart.Series<Number, Number> bestParticleSeries;
@@ -152,7 +156,12 @@ public class Controller
                     })
             );
 
-            solver.setOnSucceeded(_ -> startButton.setDisable(false));
+            solver.setOnSucceeded(_ -> {
+                startButton.setDisable(false);
+                this.lastSwarm = solver.getSwarm(); // Zakładamy, że dodasz getter do PSOSolver
+                exportButton.setDisable(false); // Aktywacja guzika eksportu po sukcesie
+            });
+
             // nie wydaje mi się, że nawet może do tego dojść, ale jest na wszelki wypadek
             solver.setOnFailed(_ -> {
                 logArea.appendText("BŁĄD WĄTKU: " + solver.getException().getMessage() + "\n");
@@ -268,5 +277,39 @@ public class Controller
                 spinner.getEditor().setText(safeText);
             }
         });
+    }
+
+    @FXML
+    void exportResults()
+    {
+        if(lastSwarm == null)
+        {
+            return;
+        }
+        // okno wyboru miejsca zapisu
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Zapisz wyniki jako CSV");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("Pliki CSV", "*.csv"));
+        java.io.File file = fileChooser.showSaveDialog(startButton.getScene().getWindow());
+
+        if(file != null)
+        {
+            try(java.io.PrintWriter writer = new java.io.PrintWriter(file))
+            {
+                writer.println("Nr czasteczki;Pozycja X;Pozycja Y;Najlepszy wynik (pBest)");
+
+                for(int i = 0; i < lastSwarm.length; i++)
+                {
+                    // Locale.GERMANY wymusza przecinek jako separator
+                    writer.println(String.format(java.util.Locale.GERMANY, "%d;%.15f;%.15f;%.15f",
+                            i + 1, lastSwarm[i].x, lastSwarm[i].y, lastSwarm[i].bestValue));
+                }
+                logArea.appendText("WYEKSPORTOWANO DANE: " + file.getName() + "\n");
+            }
+            catch (Exception e)
+            {
+                logArea.appendText("BŁĄD ZAPISU: " + e.getMessage() + "\n");
+            }
+        }
     }
 }
