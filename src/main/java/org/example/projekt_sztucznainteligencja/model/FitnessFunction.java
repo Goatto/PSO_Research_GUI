@@ -1,6 +1,5 @@
 package org.example.projekt_sztucznainteligencja.model;
 
-// TODO KOMENTARZE
 public enum FitnessFunction
 {
     ACKLEY("Ackley function", 15.0)
