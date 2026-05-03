@@ -77,11 +77,12 @@ public class PSOSolver extends Task<Void>
     {
         Random rand = new Random();
 
-        final double currentW = IsInertiaRandom ? (0.4 + rand.nextDouble() * 0.5) : baseInertia;
+        final double startingW = IsInertiaRandom ? (0.4 + rand.nextDouble() * 0.5) : baseInertia;
+        double targetW = startingW / 3.0;
         final double currentC1 = IsCognitiveRandom ? (0.5 + rand.nextDouble() * 2.0) : baseCognitive;
         final double currentC2 = IsSocialRandom ? (0.5 + rand.nextDouble() * 2.0) : baseSocial;
 
-        log(String.format("Parametry: w:%.4f | c1:%.4f | c2:%.4f\n", currentW, currentC1, currentC2));
+        log(String.format("Parametry: w:%.4f | c1:%.4f | c2:%.4f\n", startingW, currentC1, currentC2));
 
         swarm = new Particle[particlesCount];
         double[] globalBestPos = new double[2];
@@ -120,6 +121,7 @@ public class PSOSolver extends Task<Void>
         StringBuilder logBatch = new StringBuilder();
 
         // epoki
+        double currentW = startingW;
         for(int epoch = 1; epoch <= maxEpochs; epoch++)
         {
             for (int i = 0; i < particlesCount; i++)
@@ -150,6 +152,8 @@ public class PSOSolver extends Task<Void>
                     globalBestPos[1] = p.y;
                     bestParticleIndex = i;
                 }
+                // zmniejszamy bezwładność do 1/3 oryginalnej wartości w ostatniej epoce
+                currentW = startingW - ((double) (epoch - 1) / (maxEpochs - 1)) * (startingW - targetW);
             }
 
             logBatch.append(String.format("Epoka %-3d | Błąd: "
