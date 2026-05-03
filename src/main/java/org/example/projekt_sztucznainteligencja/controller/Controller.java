@@ -16,6 +16,7 @@ import java.util.List;
 public class Controller
 {
     @FXML private ComboBox<FitnessFunction> functionChoice;
+    @FXML private CheckBox gridDistribution;
     @FXML private Spinner<Double> inertiaField;
     @FXML private Spinner<Double> cognitiveField;
     @FXML private Spinner<Double> socialField;
@@ -121,7 +122,7 @@ public class Controller
             // inicjalizacja z obecnymi parametrami
             PSOSolver solver = new PSOSolver(
                     w, c1, c2, optimum, particles, epochs, precision,
-                    selectedFunc, randomIntertia.isSelected(), randomCognitive.isSelected(), randomSocial.isSelected()
+                    selectedFunc, randomIntertia.isSelected(), randomCognitive.isSelected(), randomSocial.isSelected(), gridDistribution.isSelected()
             );
 
             // modyfikacja elementów JavaFX musi się odbywać tylko w głównym wątku
