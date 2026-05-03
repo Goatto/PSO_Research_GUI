@@ -37,7 +37,7 @@
                 <RowConstraints vgrow="NEVER" />
                 <RowConstraints vgrow="NEVER" />
             </rowConstraints>
-            <Label text="Function" />
+            <Label text="Funkcje" />
             <Label text="Bezwładność" GridPane.rowIndex="1" />
             <Label text="Dążenie do optimum lokalnego" GridPane.rowIndex="2" />
             <Label text="Dążenie do optimum globalnego" GridPane.rowIndex="3" />
@@ -59,7 +59,7 @@
          <CheckBox fx:id="gridDistribution" mnemonicParsing="false" text="Równomierne rozłożenie" GridPane.columnIndex="2" />
         </GridPane>
         <Button fx:id="startButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#runPSOAlgorithm" prefWidth="350.0" text="Start" VBox.vgrow="NEVER" />
-        <Button fx:id="exportButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportResults" text="Eksportuj wyniki (Excel/CSV)" />
+        <Button fx:id="exportButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportResults" text="Eksportuj wyniki" />
         <TextArea fx:id="logArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
     </VBox>
     <ScatterChart fx:id="particleChart" animated="false" title="Rozkład cząsteczek">
