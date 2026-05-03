@@ -69,21 +69,22 @@ public class Controller
         particleChart.getData().add(particleSeries);
         particleChart.getData().add(bestParticleSeries);
 
-        fixSpinnerFormatting(inertiaField);
-        fixSpinnerFormatting(cognitiveField);
-        fixSpinnerFormatting(socialField);
-        fixSpinnerFormatting(optimumField);
-        fixIntegerSpinnerFormatting(particlesAmountField);
-        fixIntegerSpinnerFormatting(epochsField);
-        fixIntegerSpinnerFormatting(precisionField);
+        List.of(inertiaField, cognitiveField, socialField, optimumField)
+                .forEach(this::fixSpinnerFormatting);
 
-        spinnerAutoCommit(inertiaField);
-        spinnerAutoCommit(cognitiveField);
-        spinnerAutoCommit(socialField);
-        spinnerAutoCommit(optimumField);
-        spinnerAutoCommit(particlesAmountField);
-        spinnerAutoCommit(epochsField);
-        spinnerAutoCommit(precisionField);
+        List.of(particlesAmountField, epochsField, precisionField)
+                .forEach(this::fixIntegerSpinnerFormatting);
+
+        List.of(inertiaField, cognitiveField, socialField, optimumField,
+                        particlesAmountField, epochsField, precisionField)
+                .forEach(this::spinnerAutoCommit);
+
+        functionChoice.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
+            if(newValue != null)
+            {
+                optimumField.getValueFactory().setValue(newValue.getTargetOptimum());
+            }
+        });
     }
 
     @FXML
@@ -306,7 +307,7 @@ public class Controller
                 }
                 logArea.appendText("WYEKSPORTOWANO DANE: " + file.getName() + "\n");
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 logArea.appendText("BŁĄD ZAPISU: " + e.getMessage() + "\n");
             }

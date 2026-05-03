@@ -113,7 +113,7 @@ public class PSOSolver extends Task<Void>
         StringBuilder logBatch = new StringBuilder();
 
         // epoki
-        for(int epoch = 0; epoch < maxEpochs; epoch++)
+        for(int epoch = 1; epoch <= maxEpochs; epoch++)
         {
             for (int i = 0; i < particlesCount; i++)
             {
@@ -150,7 +150,7 @@ public class PSOSolver extends Task<Void>
                     + Math.max(0, precision) + "f") + "\n", epoch, globalBestValue));
             boolean earlyStop = (globalBestValue <= earlyStopTolerance);
 
-            if(epoch % 5 == 0 || earlyStop)
+            if(epoch == maxEpochs || epoch % 5 == 0 || earlyStop)
             {
                 String currentLogs = logBatch.toString();
                 logBatch.setLength(0);
@@ -173,7 +173,7 @@ public class PSOSolver extends Task<Void>
         for(int i = 0; i < swarm.length; i++)
         {
             double v = selectedFitnessFunction.evaluate(swarm[i].x, swarm[i].y, targetOptimum);
-            report.append(String.format("Cząsteczka %-3d: (%.3f, %.3f) | Błąd: %.6f\n", i, swarm[i].x, swarm[i].y, v));
+            report.append(String.format("Cząsteczka %-3d: (%.3f, %.3f) | Błąd: %.6f\n", i + 1, swarm[i].x, swarm[i].y, v));
         }
         report.append(String.format("ZWYCIĘZCA: Cząsteczka nr %d, %.10f w (%.4f, %.4f)\n", bestParticleIndex, globalBestValue, globalBestPos[0], globalBestPos[1]));
         log(report.toString());

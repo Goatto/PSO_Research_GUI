@@ -2,7 +2,7 @@ package org.example.projekt_sztucznainteligencja.model;
 
 public enum FitnessFunction
 {
-    ACKLEY("Ackley function", 15.0)
+    ACKLEY("Ackley function", 15.0, 0d)
             {
                 @Override
                 public double compute(double x, double y)
@@ -12,7 +12,7 @@ public enum FitnessFunction
                     return p1 - p2 + Math.E + 20;
                 }
             },
-    BOOTH("Booth function", 10.0)
+    BOOTH("Booth function", 10.0, 0d)
             {
                 @Override
                 public double compute(double x, double y)
@@ -20,7 +20,7 @@ public enum FitnessFunction
                     return Math.pow(x + 2 * y - 7, 2) + Math.pow(2 * x + y - 5, 2);
                 }
             },
-    CAMEL("Three-hump camel function", 5.0)
+    CAMEL("Three-hump camel function", 5.0, 0d)
             {
                 @Override
                 public double compute(double x, double y)
@@ -28,7 +28,15 @@ public enum FitnessFunction
                     return 2 * x * x - 1.05 * Math.pow(x, 4) + Math.pow(x, 6) / 6.0 + x * y + y * y;
                 }
             },
-    SPHERE("Sphere function", 5.0)
+    SIX_HUMP_CAMEL("Six-hump camel function", 5.0, -1.0316)
+            {
+                @Override
+                public double compute(double x, double y)
+                {
+                    return (4 - 2.1 * x * x + Math.pow(x, 4) / 3.0) * x * x + x * y + (-4 + 4 * y * y) * y * y;
+                }
+            },
+    SPHERE("Sphere function", 5.0, 0d)
             {
                 @Override
                 public double compute(double x, double y)
@@ -36,7 +44,7 @@ public enum FitnessFunction
                     return x * x + y * y;
                 }
             },
-    RASTRIGIN("Rastrigin function", 5.0)
+    RASTRIGIN("Rastrigin function", 5.0, 0d)
             {
                 @Override
                 public double compute(double x, double y)
@@ -47,16 +55,23 @@ public enum FitnessFunction
 
     private final String displayName;
     private final double domainRange;
+    private final double targetOptimum;
 
-    FitnessFunction(String displayName, double domainRange)
+    FitnessFunction(String displayName, double domainRange, double targetOptimum)
     {
         this.displayName = displayName;
         this.domainRange = domainRange;
+        this.targetOptimum = targetOptimum;
     }
 
     public double getDomainRange()
     {
         return domainRange;
+    }
+
+    public double getTargetOptimum()
+    {
+        return targetOptimum;
     }
 
     public abstract double compute(double x, double y);
