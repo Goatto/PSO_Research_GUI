@@ -175,11 +175,11 @@ public class Controller
             new Thread(solver).start();
 
         }
-        catch (NumberFormatException e)
+        catch(NumberFormatException e)
         {
             logArea.appendText("BŁĄD: Nieprawidłowa wartość liczbowa\n");
         }
-        catch (Exception e)
+        catch(Exception e)
         {
             logArea.appendText("BŁĄD: " + e.getMessage() + "\n");
         }
@@ -203,7 +203,7 @@ public class Controller
                     });
                 }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 // ignorujemy błędy np. gdy ktoś wpisze samą kropkę "0." albo "-"
             }
@@ -249,7 +249,8 @@ public class Controller
 
     private void fixIntegerSpinnerFormatting(Spinner<Integer> spinner)
     {
-        spinner.getValueFactory().setConverter(new javafx.util.StringConverter<>() {
+        spinner.getValueFactory().setConverter(new javafx.util.StringConverter<>()
+        {
             @Override
             public String toString(Integer value)
             {

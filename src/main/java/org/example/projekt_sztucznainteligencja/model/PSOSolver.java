@@ -36,8 +36,8 @@ public class PSOSolver extends Task<Void>
     private Particle[] swarm;
 
     public PSOSolver(double baseInertia, double baseCognitive, double baseC2, double targetOptimum,
-                     int particlesCount, int maxEpochs, int precision,
-                     FitnessFunction selectedFitnessFunction, boolean IsInertiaRandom, boolean IsCognitiveRandom, boolean IsSocialRandom, boolean useGridDistribution)
+                     int particlesCount, int maxEpochs, int precision, FitnessFunction selectedFitnessFunction,
+                     boolean IsInertiaRandom, boolean IsCognitiveRandom, boolean IsSocialRandom, boolean useGridDistribution)
     {
         this.baseInertia = baseInertia;
         this.baseCognitive = baseCognitive;
@@ -94,29 +94,36 @@ public class PSOSolver extends Task<Void>
         double vLimit = range * 0.2; // 20% dziedziny jako maksymalna prędkość
 
         // inicjalizacja
-        if (useGridDistribution)
+        if(useGridDistribution)
         {
             int cols = (int) Math.sqrt(particlesCount);
             int rows = (int) Math.ceil((double) particlesCount / cols);
             double cellWidth = (2 * range) / cols;
             double cellHeight = (2 * range) / rows;
 
-            for (int i = 0; i < particlesCount; i++) {
+            for(int i = 0; i < particlesCount; i++)
+            {
                 int r = i / cols;
                 int c = i % cols;
                 double startX = -range + (c + 0.5) * cellWidth;
                 double startY = -range + (r + 0.5) * cellHeight;
                 initParticle(i, startX, startY, globalBestPos);
             }
-        } else {
-            for (int i = 0; i < particlesCount; i++) {
+        }
+        else
+        {
+            for (int i = 0; i < particlesCount; i++)
+            {
                 double startX = -range + (2 * range) * rand.nextDouble();
                 double startY = -range + (2 * range) * rand.nextDouble();
                 initParticle(i, startX, startY, globalBestPos);
             }
         }
 
-        if (onChartUpdate != null) onChartUpdate.accept(swarm);
+        if(onChartUpdate != null)
+        {
+            onChartUpdate.accept(swarm);
+        }
 
         StringBuilder logBatch = new StringBuilder();
 
@@ -124,7 +131,7 @@ public class PSOSolver extends Task<Void>
         double currentW = startingW;
         for(int epoch = 1; epoch <= maxEpochs; epoch++)
         {
-            for (int i = 0; i < particlesCount; i++)
+            for(int i = 0; i < particlesCount; i++)
             {
                 Particle p = swarm[i];
                 p.vx = currentW * p.vx + currentC1 * rand.nextDouble() * (p.bestPos[0] - p.x)
@@ -169,7 +176,6 @@ public class PSOSolver extends Task<Void>
                 log(currentLogs);
                 if (onChartUpdate != null) onChartUpdate.accept(swarm);
             }
-
             if(earlyStop)
             {
                 log("\nEARLY STOP - Osiągnięto optimum o określonej precyzji\n");
@@ -200,11 +206,14 @@ public class PSOSolver extends Task<Void>
 
         return null;
     }
+
     public Particle[] getSwarm()
     {
         return swarm;
     }
-    private void initParticle(int i, double x, double y, double[] globalBestPos) {
+
+    private void initParticle(int i, double x, double y, double[] globalBestPos)
+    {
         swarm[i] = new Particle(x, y);
 
         double eval = selectedFitnessFunction.evaluate(x, y, targetOptimum);
@@ -212,7 +221,8 @@ public class PSOSolver extends Task<Void>
         swarm[i].bestPos[1] = y;
         swarm[i].bestValue = eval;
 
-        if (eval < globalBestValue) {
+        if(eval < globalBestValue)
+        {
             globalBestValue = eval;
             globalBestPos[0] = x;
             globalBestPos[1] = y;
