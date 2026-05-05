@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 public class PSOSolver extends Task<Void>
 {
-    private double globalBestValue = Double.MAX_VALUE;
+    private double globalBestValue = Double.MAX_VALUE; // Pole klasy do przechowywania wyniku
 
     private final double baseInertia;
     private final double baseCognitive;
@@ -19,22 +19,15 @@ public class PSOSolver extends Task<Void>
     private final ErrorType selectedError;
     private final FitnessFunction selectedFitnessFunction;
 
-    // czy określone parametry mają być losowe
     private final boolean IsInertiaRandom;
     private final boolean IsCognitiveRandom;
     private final boolean IsSocialRandom;
 
     private final boolean useGridDistribution;
-
-    // tolerancja wymagana do uzyskania wczesnego zatrzymania
     private final double earlyStopTolerance;
 
-    // callbacki do asynchronicznego zwracania danych do GUI
     private Consumer<String> onLogUpdate;
-
-    // dane do wyeksportowania
     private Particle[] swarm;
-
     private BiConsumer<Integer, Double> onEpochUpdate;
 
     public PSOSolver(double baseInertia, double baseCognitive, double baseC2, double targetOptimum,
@@ -84,12 +77,11 @@ public class PSOSolver extends Task<Void>
 
         swarm = new Particle[particlesCount];
         double[] globalBestPos = new double[2];
-        double globalBestValue = Double.MAX_VALUE;
+        this.globalBestValue = Double.MAX_VALUE; // POPRAWKA: używamy pola klasy (this), nie lokalnej zmiennej
         int bestParticleIndex = -1;
 
         double range = selectedFitnessFunction.getDomainRange();
-        // nasz clamp na prędkość
-        double vLimit = range * 0.2; // 20% dziedziny jako maksymalna prędkość
+        double vLimit = range * 0.2;
 
         // inicjalizacja
         if(useGridDistribution)
@@ -155,7 +147,7 @@ public class PSOSolver extends Task<Void>
                     bestParticleIndex = i;
                 }
             }
-            // zmniejszamy bezwładność do 1/3 oryginalnej wartości w ostatniej epoce
+
             currentW = startingW - ((double) (epoch - 1) / (maxEpochs - 1)) * (startingW - targetW);
 
             if(onEpochUpdate != null)
@@ -166,6 +158,7 @@ public class PSOSolver extends Task<Void>
             logBatch.append(String.format("Epoka %-3d | Błąd: "
                     + (globalBestValue > 1e100 ? "Start" : "%."
                     + Math.max(0, precision) + "f") + "\n", epoch, globalBestValue));
+
             boolean earlyStop = (globalBestValue <= earlyStopTolerance);
 
             if(Math.abs(globalBestValue - previousBestValue) * 20 < globalBestValue)
@@ -177,27 +170,21 @@ public class PSOSolver extends Task<Void>
                 stagnationCounter = 0;
             }
 
-
             if(epoch == maxEpochs || epoch % 5 == 0 || earlyStop)
             {
                 String currentLogs = logBatch.toString();
                 logBatch.setLength(0);
-
                 log(currentLogs);
             }
+
             if(stagnationCounter > 20)
             {
-                String currentLogs = logBatch.toString();
-                logBatch.setLength(0);
-                log(currentLogs);
-
                 log("\nEARLY STOP - Wykryto stagnacje przez 20+ epok!\n");
                 break;
             }
 
             if(earlyStop)
             {
-
                 log("\nEARLY STOP - Osiągnięto optimum o określonej precyzji\n");
                 break;
             }
@@ -214,6 +201,7 @@ public class PSOSolver extends Task<Void>
         }
         report.append(String.format("Najlepsza Cząsteczka: nr %d, %.10f w (%.4f, %.4f)\n", bestParticleIndex, globalBestValue, globalBestPos[0], globalBestPos[1]));
         log(report.toString());
+
         return null;
     }
 
