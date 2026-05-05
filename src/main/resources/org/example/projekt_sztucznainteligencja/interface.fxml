@@ -65,7 +65,7 @@
         <Button fx:id="exportButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportResults" text="Eksportuj wyniki" />
         <TextArea fx:id="logArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
     </VBox>
-    <LineChart fx:id="errorChart" animated="false" title="Zbieżność algorytmu (Błąd w czasie)" HBox.hgrow="ALWAYS">
+    <LineChart fx:id="errorChart" animated="false" title="Błąd w czasie" HBox.hgrow="ALWAYS">
         <xAxis>
             <NumberAxis label="Epoka" side="BOTTOM" fx:id="xAxis" />
         </xAxis>

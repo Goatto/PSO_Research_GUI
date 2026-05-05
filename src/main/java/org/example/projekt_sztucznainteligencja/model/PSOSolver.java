@@ -168,7 +168,7 @@ public class PSOSolver extends Task<Void>
                     + Math.max(0, precision) + "f") + "\n", epoch, globalBestValue));
             boolean earlyStop = (globalBestValue <= earlyStopTolerance);
 
-            if(previousBestValue == globalBestValue)
+            if(Math.abs(globalBestValue - previousBestValue) < globalBestValue/20)
             {
                 stagnationCounter++;
             }
