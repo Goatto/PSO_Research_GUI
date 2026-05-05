@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.projekt_sztucznainteligencja.controller.Controller">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.projekt_sztucznainteligencja.controller.Controller">
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
@@ -28,6 +28,7 @@
                 <ColumnConstraints hgrow="SOMETIMES" />
             </columnConstraints>
             <rowConstraints>
+            <RowConstraints vgrow="NEVER" />
                 <RowConstraints vgrow="NEVER" />
                 <RowConstraints vgrow="NEVER" />
                 <RowConstraints vgrow="NEVER" />
@@ -37,37 +38,39 @@
                 <RowConstraints vgrow="NEVER" />
                 <RowConstraints vgrow="NEVER" />
             </rowConstraints>
-            <Label text="Funkcje" />
-            <Label text="Bezwładność" GridPane.rowIndex="1" />
-            <Label text="Dążenie do optimum lokalnego" GridPane.rowIndex="2" />
-            <Label text="Dążenie do optimum globalnego" GridPane.rowIndex="3" />
-            <Label text="Docelowe optimum" GridPane.rowIndex="4" />
-            <Label text="Ilość cząstek" GridPane.rowIndex="5" />
-            <Label text="Ilość epok" GridPane.rowIndex="6" />
-            <Label text="Precyzja zmiennoprzecinkowa" GridPane.rowIndex="7" />
-            <ComboBox fx:id="functionChoice" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
-            <CheckBox fx:id="randomIntertia" mnemonicParsing="false" text="Losowa [0.4-0.9]" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <CheckBox fx:id="randomCognitive" mnemonicParsing="false" text="Losowa [0.5-2.5]" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <CheckBox fx:id="randomSocial" mnemonicParsing="false" text="Losowa [0.5-2.5]" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <Spinner fx:id="inertiaField" amountToStepBy="0.1" editable="true" initialValue="0.5" max="5.0" min="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Spinner fx:id="cognitiveField" amountToStepBy="0.1" editable="true" initialValue="1.5" max="5.0" min="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Spinner fx:id="socialField" amountToStepBy="0.1" editable="true" initialValue="1.5" max="5.0" min="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Spinner fx:id="optimumField" amountToStepBy="1.0" editable="true" initialValue="0.0" max="1000.0" min="-1000.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <Spinner fx:id="particlesAmountField" amountToStepBy="10" editable="true" initialValue="50" max="5000" min="10" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Spinner fx:id="epochsField" amountToStepBy="50" editable="true" initialValue="100" max="10000" min="10" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <Spinner fx:id="precisionField" amountToStepBy="1" editable="true" initialValue="10" max="15" min="1" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-         <CheckBox fx:id="gridDistribution" mnemonicParsing="false" text="Równomierne rozłożenie" GridPane.columnIndex="2" />
+            <Label text="Funkcje" GridPane.rowIndex="1" />
+            <Label text="Bezwładność" GridPane.rowIndex="2" />
+            <Label text="Dążenie do optimum lokalnego" GridPane.rowIndex="3" />
+            <Label text="Dążenie do optimum globalnego" GridPane.rowIndex="4" />
+            <Label text="Docelowe optimum" GridPane.rowIndex="5" />
+            <Label text="Ilość cząstek" GridPane.rowIndex="6" />
+            <Label text="Ilość epok" GridPane.rowIndex="7" />
+            <Label text="Precyzja zmiennoprzecinkowa" GridPane.rowIndex="8" />
+            <ComboBox fx:id="functionChoice" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <CheckBox fx:id="randomIntertia" mnemonicParsing="false" text="Losowa [0.4-0.9]" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <CheckBox fx:id="randomCognitive" mnemonicParsing="false" text="Losowa [0.5-2.5]" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <CheckBox fx:id="randomSocial" mnemonicParsing="false" text="Losowa [0.5-2.5]" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Spinner fx:id="inertiaField" amountToStepBy="0.1" editable="true" initialValue="0.5" max="5.0" min="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Spinner fx:id="cognitiveField" amountToStepBy="0.1" editable="true" initialValue="1.5" max="5.0" min="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Spinner fx:id="socialField" amountToStepBy="0.1" editable="true" initialValue="1.5" max="5.0" min="0.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Spinner fx:id="optimumField" amountToStepBy="1.0" editable="true" initialValue="0.0" max="1000.0" min="-1000.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Spinner fx:id="particlesAmountField" amountToStepBy="10" editable="true" initialValue="50" max="5000" min="10" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Spinner fx:id="epochsField" amountToStepBy="50" editable="true" initialValue="100" max="10000" min="10" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Spinner fx:id="precisionField" amountToStepBy="1" editable="true" initialValue="10" max="15" min="1" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+         <CheckBox fx:id="gridDistribution" mnemonicParsing="false" text="Równomierne rozłożenie" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+         <Label text="Bład" />
+         <ComboBox fx:id="errorChoice" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
         </GridPane>
         <Button fx:id="startButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#runPSOAlgorithm" prefWidth="350.0" text="Start" VBox.vgrow="NEVER" />
         <Button fx:id="exportButton" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportResults" text="Eksportuj wyniki" />
         <TextArea fx:id="logArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
     </VBox>
-    <ScatterChart fx:id="particleChart" animated="false" title="Rozkład cząsteczek">
+    <LineChart fx:id="errorChart" animated="false" title="Zbieżność algorytmu (Błąd w czasie)" HBox.hgrow="ALWAYS">
         <xAxis>
-            <NumberAxis label="Oś X" side="BOTTOM" fx:id="xAxis" />
+            <NumberAxis label="Epoka" side="BOTTOM" fx:id="xAxis" />
         </xAxis>
         <yAxis>
-            <NumberAxis fx:id="yAxis" label="Oś Y" side="LEFT" />
+            <NumberAxis fx:id="yAxis" label="Błąd (logarytmiczny)" side="LEFT" />
         </yAxis>
-    </ScatterChart>
+    </LineChart>
 </HBox>

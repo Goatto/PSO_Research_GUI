@@ -2,6 +2,7 @@ package org.example.projekt_sztucznainteligencja.model;
 
 import javafx.concurrent.Task;
 import java.util.Random;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class PSOSolver extends Task<Void>
@@ -15,6 +16,7 @@ public class PSOSolver extends Task<Void>
     private final int particlesCount;
     private final int maxEpochs;
     private final int precision;
+    private final ErrorType selectedError;
     private final FitnessFunction selectedFitnessFunction;
 
     // czy określone parametry mają być losowe
@@ -29,14 +31,14 @@ public class PSOSolver extends Task<Void>
 
     // callbacki do asynchronicznego zwracania danych do GUI
     private Consumer<String> onLogUpdate;
-    private Consumer<Particle[]> onChartUpdate;
-    private Consumer<double[]> onBestFound;
 
     // dane do wyeksportowania
     private Particle[] swarm;
 
+    private BiConsumer<Integer, Double> onEpochUpdate;
+
     public PSOSolver(double baseInertia, double baseCognitive, double baseC2, double targetOptimum,
-                     int particlesCount, int maxEpochs, int precision, FitnessFunction selectedFitnessFunction,
+                     int particlesCount, int maxEpochs, int precision, ErrorType selectedError, FitnessFunction selectedFitnessFunction,
                      boolean IsInertiaRandom, boolean IsCognitiveRandom, boolean IsSocialRandom, boolean useGridDistribution)
     {
         this.baseInertia = baseInertia;
@@ -46,6 +48,7 @@ public class PSOSolver extends Task<Void>
         this.particlesCount = particlesCount;
         this.maxEpochs = maxEpochs;
         this.precision = precision;
+        this.selectedError = selectedError;
         this.selectedFitnessFunction = selectedFitnessFunction;
         this.IsInertiaRandom = IsInertiaRandom;
         this.IsCognitiveRandom = IsCognitiveRandom;
@@ -58,15 +61,10 @@ public class PSOSolver extends Task<Void>
     {
         this.onLogUpdate = onLogUpdate;
     }
-    public void setOnChartUpdate(Consumer<Particle[]> onChartUpdate)
+    public void setOnEpochUpdate(BiConsumer<Integer, Double> onEpochUpdate)
     {
-        this.onChartUpdate = onChartUpdate;
+        this.onEpochUpdate = onEpochUpdate;
     }
-    public void setOnBestFound(Consumer<double[]> onBestFound)
-    {
-        this.onBestFound = onBestFound;
-    }
-
     private void log(String message)
     {
         if (onLogUpdate != null) onLogUpdate.accept(message);
@@ -120,17 +118,14 @@ public class PSOSolver extends Task<Void>
             }
         }
 
-        if(onChartUpdate != null)
-        {
-            onChartUpdate.accept(swarm);
-        }
-
         StringBuilder logBatch = new StringBuilder();
 
         // epoki
         double currentW = startingW;
+        double stagnationCounter = 0;
         for(int epoch = 1; epoch <= maxEpochs; epoch++)
         {
+            double previousBestValue = globalBestValue;
             for(int i = 0; i < particlesCount; i++)
             {
                 Particle p = swarm[i];
@@ -145,7 +140,7 @@ public class PSOSolver extends Task<Void>
                 p.x += p.vx;
                 p.y += p.vy;
 
-                double eval = selectedFitnessFunction.evaluate(p.x, p.y, targetOptimum);
+                double eval = selectedFitnessFunction.evaluate(p.x, p.y, targetOptimum, selectedError);
                 if(eval < p.bestValue)
                 {
                     p.bestValue = eval;
@@ -159,8 +154,13 @@ public class PSOSolver extends Task<Void>
                     globalBestPos[1] = p.y;
                     bestParticleIndex = i;
                 }
-                // zmniejszamy bezwładność do 1/3 oryginalnej wartości w ostatniej epoce
-                currentW = startingW - ((double) (epoch - 1) / (maxEpochs - 1)) * (startingW - targetW);
+            }
+            // zmniejszamy bezwładność do 1/3 oryginalnej wartości w ostatniej epoce
+            currentW = startingW - ((double) (epoch - 1) / (maxEpochs - 1)) * (startingW - targetW);
+
+            if(onEpochUpdate != null)
+            {
+                onEpochUpdate.accept(epoch, Math.abs(globalBestValue));
             }
 
             logBatch.append(String.format("Epoka %-3d | Błąd: "
@@ -168,16 +168,36 @@ public class PSOSolver extends Task<Void>
                     + Math.max(0, precision) + "f") + "\n", epoch, globalBestValue));
             boolean earlyStop = (globalBestValue <= earlyStopTolerance);
 
+            if(previousBestValue == globalBestValue)
+            {
+                stagnationCounter++;
+            }
+            else
+            {
+                stagnationCounter = 0;
+            }
+
+
             if(epoch == maxEpochs || epoch % 5 == 0 || earlyStop)
             {
                 String currentLogs = logBatch.toString();
                 logBatch.setLength(0);
 
                 log(currentLogs);
-                if (onChartUpdate != null) onChartUpdate.accept(swarm);
             }
+            if(stagnationCounter > 20)
+            {
+                String currentLogs = logBatch.toString();
+                logBatch.setLength(0);
+                log(currentLogs);
+
+                log("\nEARLY STOP - Wykryto stagnacje przez 20+ epok!\n");
+                break;
+            }
+
             if(earlyStop)
             {
+
                 log("\nEARLY STOP - Osiągnięto optimum o określonej precyzji\n");
                 break;
             }
@@ -186,24 +206,14 @@ public class PSOSolver extends Task<Void>
         }
 
         // raport końcowy
-        StringBuilder report = new StringBuilder("\nOsiągnięto koniec poprzez epoki\n");
+        StringBuilder report = new StringBuilder("\nOsiągnięto koniec działania algorytmu\n");
         for(int i = 0; i < swarm.length; i++)
         {
-            double v = selectedFitnessFunction.evaluate(swarm[i].x, swarm[i].y, targetOptimum);
+            double v = selectedFitnessFunction.evaluate(swarm[i].x, swarm[i].y, targetOptimum, selectedError);
             report.append(String.format("Cząsteczka %-3d: (%.3f, %.3f) | Błąd: %.6f\n", i + 1, swarm[i].x, swarm[i].y, v));
         }
-        report.append(String.format("ZWYCIĘZCA: Cząsteczka nr %d, %.10f w (%.4f, %.4f)\n", bestParticleIndex, globalBestValue, globalBestPos[0], globalBestPos[1]));
+        report.append(String.format("Najlepsza Cząsteczka: nr %d, %.10f w (%.4f, %.4f)\n", bestParticleIndex, globalBestValue, globalBestPos[0], globalBestPos[1]));
         log(report.toString());
-
-        if(onChartUpdate != null)
-        {
-            onChartUpdate.accept(swarm);
-        }
-        if(onBestFound != null)
-        {
-            onBestFound.accept(globalBestPos);
-        }
-
         return null;
     }
 
@@ -216,7 +226,7 @@ public class PSOSolver extends Task<Void>
     {
         swarm[i] = new Particle(x, y);
 
-        double eval = selectedFitnessFunction.evaluate(x, y, targetOptimum);
+        double eval = selectedFitnessFunction.evaluate(x, y, targetOptimum, selectedError);
         swarm[i].bestPos[0] = x;
         swarm[i].bestPos[1] = y;
         swarm[i].bestValue = eval;

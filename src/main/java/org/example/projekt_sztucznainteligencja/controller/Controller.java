@@ -2,19 +2,21 @@ package org.example.projekt_sztucznainteligencja.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.util.StringConverter;
+import org.example.projekt_sztucznainteligencja.model.ErrorType;
 import org.example.projekt_sztucznainteligencja.model.FitnessFunction;
 import org.example.projekt_sztucznainteligencja.model.PSOSolver;
 import org.example.projekt_sztucznainteligencja.model.Particle;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Controller
 {
+    @FXML private ComboBox<ErrorType> errorChoice;
     @FXML private ComboBox<FitnessFunction> functionChoice;
     @FXML private CheckBox gridDistribution;
     @FXML private Spinner<Double> inertiaField;
@@ -32,16 +34,15 @@ public class Controller
     @FXML private Button startButton;
     @FXML private TextArea logArea;
 
-    @FXML private ScatterChart<Number, Number> particleChart;
+    @FXML private LineChart<Number, Number> errorChart;
+    private XYChart.Series<Number, Number> errorSeries;
     @FXML private NumberAxis xAxis;
     @FXML private NumberAxis yAxis;
 
     @FXML private Button exportButton;
     private Particle[] lastSwarm;
 
-    private XYChart.Series<Number, Number> particleSeries;
-    private XYChart.Series<Number, Number> bestParticleSeries;
-    private List<XYChart.Data<Number, Number>> particleDataPoints;
+
 
     @FXML
     public void initialize()
@@ -49,26 +50,31 @@ public class Controller
         functionChoice.getItems().addAll(FitnessFunction.values());
         functionChoice.setValue(FitnessFunction.ACKLEY);
 
-        particleChart.setLegendVisible(false);
-        xAxis.setLabel("Oś X");
-        yAxis.setLabel("Oś Y");
+        errorChoice.getItems().addAll(ErrorType.values());
+        errorChoice.setValue(ErrorType.ABSOLUTE);
 
-        xAxis.setAutoRanging(false);
-        xAxis.setLowerBound(-15);
-        xAxis.setUpperBound(15);
-        xAxis.setTickUnit(5);
+        errorChart.setLegendVisible(false);
+        xAxis.setLabel("Epoka");
+        yAxis.setLabel("Błąd");
 
-        yAxis.setAutoRanging(false);
-        yAxis.setLowerBound(-15);
-        yAxis.setUpperBound(15);
-        yAxis.setTickUnit(5);
 
-        particleSeries = new XYChart.Series<>();
-        bestParticleSeries = new XYChart.Series<>();
-        particleDataPoints = new ArrayList<>();
+        yAxis.setTickLabelFormatter(new StringConverter<>()
+        {
+            @Override
+            public String toString(Number value)
+            {
+                double exp = value.doubleValue();
+                return String.format("10^(%.1f)", exp);
+            }
 
-        particleChart.getData().add(particleSeries);
-        particleChart.getData().add(bestParticleSeries);
+            @Override
+            public Number fromString(String string)
+            {
+                return 0;
+            }
+        });
+        errorSeries = new XYChart.Series<>();
+        errorChart.getData().add(errorSeries);
 
         List.of(inertiaField, cognitiveField, socialField, optimumField)
                 .forEach(this::fixSpinnerFormatting);
@@ -102,26 +108,16 @@ public class Controller
             int epochs = epochsField.getValue();
             int precision = precisionField.getValue();
             FitnessFunction selectedFunc = functionChoice.getValue();
-
+            ErrorType selectedError = errorChoice.getValue();
             // zablokowanie przycisku
             startButton.setDisable(true);
             logArea.clear();
-            // wyczyszczenie starych danych
-            particleSeries.getData().clear();
-            bestParticleSeries.getData().clear();
-            particleDataPoints.clear();
+            errorSeries.getData().clear();
 
-            // z góry tworzymy punkty wykresu, zwykle aktualizujemy ich współrzędne
-            // znacznie zmniejsza to ilość tworzenia niepotrzebnych zmiennych do usunięcia przez GC
-            for(int i = 0; i < particles; i++)
-            {
-                particleDataPoints.add(new XYChart.Data<>(0, 0));
-            }
-            particleSeries.getData().setAll(particleDataPoints);
 
             // inicjalizacja z obecnymi parametrami
             PSOSolver solver = new PSOSolver(
-                    w, c1, c2, optimum, particles, epochs, precision,
+                    w, c1, c2, optimum, particles, epochs, precision, selectedError,
                     selectedFunc, randomIntertia.isSelected(), randomCognitive.isSelected(), randomSocial.isSelected(), gridDistribution.isSelected()
             );
 
@@ -130,31 +126,11 @@ public class Controller
                     Platform.runLater(() -> logArea.appendText(message))
             );
 
-            solver.setOnChartUpdate(swarm ->
+            solver.setOnEpochUpdate((epoch, bestError) ->
                     Platform.runLater(() -> {
-                        // aktualizacja współrzędnych wcześniej wygenerowanych punktów
-                        for(int i = 0; i < swarm.length; i++) {
-                            particleDataPoints.get(i).setXValue(swarm[i].x);
-                            particleDataPoints.get(i).setYValue(swarm[i].y);
-                        }
-                    })
-            );
-
-            solver.setOnBestFound(bestPos ->
-                    Platform.runLater(() -> {
-                        // określenie globalnego optimum
-                        XYChart.Data<Number, Number> bestNode = new XYChart.Data<>(bestPos[0], bestPos[1]);
-                        // zmienienie stylu globalnego optimum by było lepiej widoczne
-                        bestNode.nodeProperty().addListener((_, _, newNode) -> {
-                            if(newNode != null)
-                            {
-                                // zmiana koloru
-                                newNode.setStyle("-fx-background-color: #0000ff; -fx-background-radius: 10px;");
-                                // przeniesienie na pierwszą warstwę
-                                newNode.toFront();
-                            }
-                        });
-                        bestParticleSeries.getData().add(bestNode);
+                        // Jeśli błąd jest 0, logarytm wybuchnie, więc dajemy małe zabezpieczenie
+                        double displayError = bestError > 0 ? Math.log10(bestError) : -15;
+                        errorSeries.getData().add(new XYChart.Data<>(epoch, displayError));
                     })
             );
 

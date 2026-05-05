@@ -76,9 +76,10 @@ public enum FitnessFunction
 
     public abstract double compute(double x, double y);
 
-    public double evaluate(double x, double y, double target)
+    public double evaluate(double x, double y, double target, ErrorType errorType)
     {
-        return Math.abs(compute(x, y) - target);
+        double actual = compute(x, y);
+        return errorType.compute(actual, target);
     }
 
     @Override
