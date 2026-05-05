@@ -298,7 +298,7 @@ public class Controller
             ghostChart.setAnimated(false);
             ghostChart.setCreateSymbols(false);
             ghostChart.setLegendVisible(true);
-            ghostChart.setTitle("Zbieżność algorytmu - " + savedAttemptLimit + " ostatnich prób");
+            ghostChart.setTitle("Zbieżność algorytmu ostatnich " + savedAttemptLimit + " prób");
 
             for(int i = 0; i < runsErrorHistory.size(); i++)
             {
